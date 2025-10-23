@@ -1,36 +1,45 @@
-// You can add this to a new file (e.g., MainScreen.kt)
-// or at the bottom of your MainActivity.kt file.
-
 package com.example.notepad
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
-@Composable
-fun MainScreen(navController: NavController) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(onClick = { navController.navigate("list") }) {
-            Text("Notepad")
-        }
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MaterialTheme {
+                Surface {
+                    val navController = rememberNavController()
+                    // Inisialisasi ViewModel untuk Notepad
+                    val noteViewModel: NoteViewModel = viewModel()
 
-        Spacer(modifier = Modifier.height(16.dp))
+                    NavHost(navController = navController, startDestination = "home") {
 
-        Button(onClick = { navController.navigate("calculator") }) {
-            Text("Calculator")
+                        composable("home") {
+                            MainScreen(navController)
+                        }
+
+                        composable("list") {
+                            NoteListScreen(navController, noteViewModel)
+                        }
+
+                        composable("editor") {
+                            EditorScreen(navController, noteViewModel)
+                        }
+
+                        composable("calculator") {
+                            CalculatorScreen(navController)
+                        }
+                    }
+                }
+            }
         }
     }
 }
